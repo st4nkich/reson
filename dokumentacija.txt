@@ -1,0 +1,4 @@
+/*TODO: Napisati dokumentaciju kako je radjeno*/
+
+
+otic u build i uradit cmake i onda make kako bi probao example.py
