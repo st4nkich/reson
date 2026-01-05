@@ -1,11 +1,11 @@
 #pragma once
-#include "../include/core/frame.hpp"
-#include "../include/core/spectre.hpp"
-#include "../include/core/types.hpp"
-#include "../include/dsp/fft.hpp"
-#include "../include/dsp/helpers.hpp"
-#include "../include/dsp/window.hpp"
-#include "../include/dsp/mel.hpp"
+#include "../core/frame.hpp"
+#include "../core/spectre.hpp"
+#include "../core/types.hpp"
+#include "../dsp/fft.hpp"
+#include "../dsp/helpers.hpp"
+#include "../dsp/window.hpp"
+#include "../dsp/mel.hpp"
 
 
 template<size_t N>

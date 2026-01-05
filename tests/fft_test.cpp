@@ -29,7 +29,7 @@ void energy_verification(const reson::core::Frame<N>& frame, const reson::core::
 
 template<size_t N>
 void single_sinus_verification(reson::core::Frame<N> &frame, float amplitude, float frequency, float sample_rate, reson::core::Spectre<N>& spectre) {
-    frame = create_test_frame<N>(amplitude, frequency, sample_rate);
+    frame = create_single_sinusoid_frame<N>(amplitude, frequency, sample_rate);
 
     reson::dsp::FFT<N> fft;
     fft.process(frame, spectre);
