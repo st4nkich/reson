@@ -9,6 +9,20 @@
 
 
 template<size_t N>
+/**
+ * @ingroup features
+ * @brief End-to-end MFCC feature extraction pipeline for a single frame.
+ *
+ * Steps:
+ * - windowing (Hann)
+ * - FFT
+ * - power spectrum
+ * - Mel filter bank
+ * - log compression
+ * - DCT (keep first `n_mfcc`)
+ *
+ * @tparam N Frame size.
+ */
 class MFCCPipeline {
     public:
       
@@ -29,6 +43,11 @@ class MFCCPipeline {
 
         }
 
+        /**
+         * @brief Run MFCC extraction on one frame.
+         * @param frame Input time-domain frame.
+         * @return Vector of MFCC coefficients (size = `n_mfcc`).
+         */
         std::vector<float> process(const reson::core::Frame<N>& frame) {
             reson::core::Frame<N> windowed_frame = frame;
             window_.apply_window(windowed_frame);

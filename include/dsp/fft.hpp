@@ -11,6 +11,15 @@ namespace reson::dsp{
 
 template<size_t N>
 
+/**
+ * @ingroup dsp
+ * @brief Radix-2 Cooley–Tukey FFT.
+ *
+ * Converts a real input frame (`reson::core::Frame<N>`) into a complex spectrum
+ * (`reson::core::Spectre<N>`).
+ *
+ * @tparam N FFT size (must be a power of 2).
+ */
 class FFT{
 
 public:
@@ -19,6 +28,11 @@ public:
         compute_twiddle();
     }
 
+    /**
+     * @brief Compute the FFT of a single frame.
+     * @param in Input time-domain frame.
+     * @param out Output complex spectrum.
+     */
     void process(const core::Frame<N>& in, core::Spectre<N>& out) const {
 
         for(size_t i = 0; i < N; i++){

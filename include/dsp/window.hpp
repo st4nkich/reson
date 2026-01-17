@@ -7,12 +7,24 @@
 
 namespace reson::dsp{
     
+/**
+ * @ingroup dsp
+ * @brief Supported window functions.
+ */
 enum WindowType{
     Hann,
     Hamming
 };
 
 template<size_t N>
+/**
+ * @ingroup dsp
+ * @brief Windowing function applied to a `Frame<N>`.
+ *
+ * Windowing reduces spectral leakage before FFT.
+ *
+ * @tparam N Frame size.
+ */
 class Window{
         
 public:
@@ -21,6 +33,10 @@ public:
         compute_coefficients();
     }
 
+    /**
+     * @brief Multiply the frame samples by the window coefficients.
+     * @param frame Frame to be modified in-place.
+     */
     void apply_window(reson::core::Frame<N>& frame) const{
         for(size_t i = 0; i < N; i++){
             frame[i] *= coeffs[i];

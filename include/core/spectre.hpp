@@ -5,6 +5,14 @@
 
 namespace reson::core{
 
+    /**
+     * @ingroup core
+     * @brief Fixed-size complex frequency-domain spectrum.
+     *
+     * Produced by `reson::dsp::FFT<N>`.
+     *
+     * @tparam N Number of complex FFT bins.
+     */
     template<size_t N>
     struct Spectre{
         std::array<std::complex<float>, N> bins;

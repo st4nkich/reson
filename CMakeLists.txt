@@ -33,3 +33,26 @@ target_include_directories(pipeline_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/inc
 
 add_executable(window_test tests/window_test.cpp)
 target_include_directories(window_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+
+# --- Optional: Doxygen documentation ---
+find_package(Doxygen QUIET)
+
+if(DOXYGEN_FOUND)
+    set(DOXYFILE_IN  ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in)
+    set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+    if(EXISTS ${DOXYFILE_IN})
+        configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
+
+        add_custom_target(docs
+            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMENT "Generating API documentation with Doxygen"
+            VERBATIM
+        )
+    else()
+        message(STATUS "Doxygen config template not found at ${DOXYFILE_IN}")
+    endif()
+else()
+    message(STATUS "Doxygen not found; 'docs' target will be unavailable")
+endif()

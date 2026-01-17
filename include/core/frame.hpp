@@ -5,6 +5,14 @@
 
 namespace reson::core{
 
+    /**
+     * @ingroup core
+     * @brief Fixed-size time-domain audio frame.
+     *
+     * Lightweight wrapper around `std::array<float, N>`.
+     *
+     * @tparam N Number of samples in the frame.
+     */
     template<size_t N>
     struct Frame{
         std::array<float, N> samples;

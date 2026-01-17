@@ -7,8 +7,21 @@
 
 namespace reson::dsp {
 
+/**
+ * @ingroup dsp
+ * @brief Triangular Mel filter bank projection for power spectra.
+ */
 class MelFilterBank {
 public:
+    /**
+     * @brief Construct a Mel filter bank.
+     * @param sample_rate Input signal sample rate (Hz).
+     * @param n_fft FFT size.
+     * @param n_mels Number of Mel filters.
+     * @param fmin_hz Lower frequency bound (Hz).
+     * @param fmax_hz Upper frequency bound (Hz). If <= 0, defaults to Nyquist.
+     * @param normalize_by_sum If true, normalize each filter by sum of weights.
+     */
     MelFilterBank(int sample_rate, int n_fft, int n_mels,
                   float fmin_hz=0.0f, float fmax_hz=-1.0f,
                   bool normalize_by_sum=true)
@@ -19,6 +32,11 @@ public:
         build_filterbank();
     }
 
+    /**
+     * @brief Apply filter bank to a power spectrum.
+     * @param power_spectrum Vector of size `n_fft/2 + 1`.
+     * @return Vector of Mel energies (size = `n_mels`).
+     */
     std::vector<float> apply(const std::vector<float>& power_spectrum) const {
         const size_t n_bins = filterbank_[0].size();
         if (power_spectrum.size() != n_bins)
@@ -31,6 +49,9 @@ public:
         return mel;
     }
 
+    /**
+     * @brief Access raw filter bank weights.
+     */
     const std::vector<std::vector<float>>& get_filterbank() const { return filterbank_; }
 
 private:
