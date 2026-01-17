@@ -87,11 +87,32 @@ Build outputs:
 
 ## Running tests
 
+Tests are implemented with GoogleTest and registered via CTest.
+
+### Run all tests
+
 ```bash
-cd build
-./fft_test
-./window_test
-./pipeline_test
+cmake -S . -B build
+cmake --build build -j
+ctest --test-dir build --output-on-failure
+```
+
+### Useful CTest commands
+
+```bash
+# list tests without running
+ctest --test-dir build -N
+
+# run a subset (regex)
+ctest --test-dir build -R FFT
+```
+
+### Run test executables directly
+
+```bash
+./build/fft_test
+./build/window_test
+./build/pipeline_test
 ```
 
 ## Python usage
