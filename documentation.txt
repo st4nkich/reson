@@ -3,7 +3,8 @@
 I - Project goal and concept
 
 This project implements audio signal processing via an MFCC pipeline (Mel-Frequency Cepstral Coefficients).
-The idea is to transform a signal through MFCC processing into a compact representation (a coefficient vector) ready for further analysis (e.g., classification, clustering, sound detection, etc.).
+The idea is to transform a signal through MFCC processing into a compact representation (a coefficient vector) ready for
+further analysis (e.g., classification, clustering, sound detection, etc.).
 
 The implementation is modular: each processing stage (windowing, FFT, Mel, DCT) is separated, making it easy
 to follow and test each component independently.
