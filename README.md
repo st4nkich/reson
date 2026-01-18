@@ -29,7 +29,7 @@ The implementation is intentionally minimal and separated into stages (windowing
 - `bindings/`
 	- pybind11 module exposing the C++ API to Python
 - `tests/`
-	- Small test executables for FFT, windowing, and the full MFCC pipeline
+	- GoogleTest-based unit tests for FFT, windowing, Mel filters, and MFCC pipeline (11 tests total)
 
 ## MFCC pipeline overview
 
@@ -87,7 +87,7 @@ Build outputs:
 
 ## Running tests
 
-Tests are implemented with GoogleTest and registered via CTest.
+Tests are implemented with GoogleTest and automatically discovered by CTest during build.
 
 ### Run all tests
 
@@ -97,22 +97,38 @@ cmake --build build -j
 ctest --test-dir build --output-on-failure
 ```
 
+You should see all 11 tests pass:
+- 6 tests in `fft_test` (CoreFrameSpectre, FFT, Helpers)
+- 3 tests in `window_test` (Window)
+- 2 tests in `pipeline_test` (MelFilterBank, MFCCPipeline)
+
 ### Useful CTest commands
 
 ```bash
-# list tests without running
+# List all discovered tests
 ctest --test-dir build -N
 
-# run a subset (regex)
+# Run a subset by regex match
 ctest --test-dir build -R FFT
+
+# Verbose output
+ctest --test-dir build -V
 ```
 
-### Run test executables directly
+### Run test executables directly with GoogleTest
 
 ```bash
+# List all tests in a binary
+./build/fft_test --gtest_list_tests
+
+# Run all tests in a binary
 ./build/fft_test
-./build/window_test
-./build/pipeline_test
+
+# Run specific test suite
+./build/fft_test --gtest_filter=FFT.*
+
+# Run specific test case
+./build/window_test --gtest_filter=Window.HannHasZeroEndpointsOnOnes
 ```
 
 ## Python usage

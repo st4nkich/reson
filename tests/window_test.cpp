@@ -1,103 +1,62 @@
-#include <iostream>
-#include <array>
-#include <algorithm>
+#include <gtest/gtest.h>
+#include <cmath>
 #include "../include/core/frame.hpp"
 #include "../include/core/types.hpp"
 #include "../include/dsp/window.hpp"
 #include "generator.hpp"
 
-template<size_t N>
-void sinus_test(float amplitude, float frequency, float sample_rate) {
-    reson::core::Frame<N> before_window;
-    before_window = create_single_sinusoid_frame<N>(amplitude, frequency, sample_rate);
-
-    reson::dsp::Window<N> hann_window(reson::dsp::WindowType::Hann);
-    reson::core::Frame<N> after_window = before_window;
-    hann_window.apply_window(after_window);
-
-    std::cout << "Before Window (first 10 samples):" << std::endl;
-    for (size_t i = 0; i < 10; ++i) {
-        std::cout << before_window[i] << "\n";
-    }
-    std::cout << std::endl;
-
-    std::cout << "After Hann Window (first 10 samples):" << std::endl;
-    for (size_t i = 0; i < 10; ++i) {
-        std::cout << after_window[i] << "\n";
-    }
-
-    std::cout << "Before Window (last 10 samples):" << std::endl;
-    for (size_t i = N - 10; i < N; ++i) {
-        std::cout  << before_window[i] << "\n";
-    }
-    std::cout << std::endl;
-
-    std::cout << "After Hann Window (last 10 samples):" << std::endl;
-    for (size_t i = N - 10; i < N; ++i) {
-        std::cout << after_window[i] << "\n";
-    }
-    std::cout << std::endl;
-}
-
-template<size_t N>
-void coefficient_test() {
-    reson::core::Frame<N> frame;
-
-    for(size_t i = 0; i < N; ++i) {
-        frame[i] = 1.0f;
-    }
-
-    reson::core::Frame<N> hanned_frame = frame;;
-    reson::core::Frame<N> hamminged_frame = frame;
-
-    reson::dsp::Window<N> hann_window(reson::dsp::WindowType::Hann);
-    reson::dsp::Window<N> hamming_window(reson::dsp::WindowType::Hamming);
-
-    hann_window.apply_window(hanned_frame);
-    hamming_window.apply_window(hamminged_frame);
-
-    std::cout << "Hann Window Coefficients (first 10):" << std::endl;
-    for (size_t i = 0; i < 10; ++i) {
-        std::cout << hanned_frame[i] << "\n"; 
-    }
-
-    float max_hann = hanned_frame[0];
-    float min_hann = hanned_frame[0];
-    for (size_t i = 1; i < N; ++i) {
-        if (hanned_frame[i] > max_hann) {
-            max_hann = hanned_frame[i];
-        }
-        if (hanned_frame[i] < min_hann) {
-            min_hann = hanned_frame[i];
-        }
-    }
-    std::cout << "Max value in Hann window: " << max_hann << std::endl;
-    std::cout << "Min value in Hann window: " << min_hann << std::endl; 
-
-    std::cout << "Hamming Window Coefficients (first 10):" << std::endl;
-    for (size_t i = 0; i < 10; ++i) {
-        std::cout << hamminged_frame[i] << "\n";
-    }
-    float max_hamming = hamminged_frame[0];
-    float min_hamming = hamminged_frame[0];
-    for (size_t i = 1; i < N; ++i) {
-        if (hamminged_frame[i] > max_hamming) {
-            max_hamming = hamminged_frame[i]; 
-        }
-        if (hamminged_frame[i] < min_hamming) {
-            min_hamming = hamminged_frame[i];
-        } 
-    }
-    std::cout << "Max value in Hamming window: " << max_hamming << std::endl;
-    std::cout << "Min value in Hamming window: " << min_hamming << std::endl;
-
-}
-
-int main(){
+// Test that Hann window has zero endpoints when applied to ones
+TEST(Window, HannHasZeroEndpointsOnOnes) {
     constexpr size_t N = 512;
+    reson::core::Frame<N> frame;
+    frame.samples.fill(1.0f);
 
-    sinus_test<N>(1.0f, 440.0f, 16000.0f);
-    coefficient_test<N>();
+    reson::dsp::Window<N> hann_window(reson::dsp::WindowType::Hann);
+    hann_window.apply_window(frame);
 
-    return 0;
+    // Hann window should have zero at endpoints
+    EXPECT_NEAR(frame[0], 0.0f, 1e-5f);
+    EXPECT_NEAR(frame[N - 1], 0.0f, 1e-5f);
+    
+    // Middle should be close to 1.0
+    EXPECT_NEAR(frame[N / 2], 1.0f, 0.01f);
+}
+
+// Test that Hamming window has ~0.08 endpoints when applied to ones
+TEST(Window, HammingHasApprox008EndpointsOnOnes) {
+    constexpr size_t N = 512;
+    reson::core::Frame<N> frame;
+    frame.samples.fill(1.0f);
+
+    reson::dsp::Window<N> hamming_window(reson::dsp::WindowType::Hamming);
+    hamming_window.apply_window(frame);
+
+    // Hamming window should have ~0.08 at endpoints
+    EXPECT_NEAR(frame[0], 0.08f, 0.01f);
+    EXPECT_NEAR(frame[N - 1], 0.08f, 0.01f);
+    
+    // Middle should be close to 1.0
+    EXPECT_NEAR(frame[N / 2], 1.0f, 0.01f);
+}
+
+// Test that apply_window scales samples properly
+TEST(Window, ApplyWindowScalesSamples) {
+    constexpr size_t N = 512;
+    reson::core::Frame<N> frame = create_single_sinusoid_frame<N>(1.0f, 440.0f, 16000.0f);
+    reson::core::Frame<N> original_frame = frame;
+
+    reson::dsp::Window<N> hann_window(reson::dsp::WindowType::Hann);
+    hann_window.apply_window(frame);
+
+    // After windowing, samples should be scaled
+    // Endpoints should be reduced to near zero
+    
+    // Energy should be reduced overall
+    float original_energy = 0.0f;
+    float windowed_energy = 0.0f;
+    for (size_t i = 0; i < N; ++i) {
+        original_energy += original_frame[i] * original_frame[i];
+        windowed_energy += frame[i] * frame[i];
+    }
+    EXPECT_LT(windowed_energy, original_energy);
 }

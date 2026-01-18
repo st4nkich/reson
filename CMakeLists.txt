@@ -24,15 +24,35 @@ pybind11_add_module(reson ${SRC_FILES})
 # --- Optional: target include dirs (modern CMake) ---
 target_include_directories(reson PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+# --- GoogleTest setup ---
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG v1.14.0
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+include(GoogleTest)
+
 # --- Build tests ---
 add_executable(fft_test tests/fft_test.cpp)
 target_include_directories(fft_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+target_link_libraries(fft_test GTest::gtest_main)
+gtest_discover_tests(fft_test)
 
 add_executable(pipeline_test tests/pipeline_test.cpp)
 target_include_directories(pipeline_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+target_link_libraries(pipeline_test GTest::gtest_main)
+gtest_discover_tests(pipeline_test)
 
 add_executable(window_test tests/window_test.cpp)
 target_include_directories(window_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+target_link_libraries(window_test GTest::gtest_main)
+gtest_discover_tests(window_test)
 
 # --- Optional: Doxygen documentation ---
 find_package(Doxygen QUIET)
